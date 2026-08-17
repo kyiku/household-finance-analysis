@@ -1,0 +1,20 @@
+# 機密情報(e-Stat APIキー) — 絶対にコミットしない
+.env
+
+# 環境・キャッシュ
+.venv/
+__pycache__/
+.pytest_cache/
+.coverage
+.DS_Store
+notebooks/.ipynb_checkpoints/
+.claude/
+
+# ルートdata/はkansei/data/と重複するため除外(再取得スクリプトあり)
+/data/
+
+# Teams共有用の複製
+/teams_upload/
+
+# 一般用ミクロデータ(利用規約に基づき各自が統計センターから取得する。取得手順はREADME参照)
+kansei/microdata/

@@ -1,0 +1,11 @@
+pandas
+matplotlib
+japanize-matplotlib
+setuptools<81
+jupyter
+ipykernel
+nbconvert
+scikit-learn
+streamlit
+pytest
+pytest-cov

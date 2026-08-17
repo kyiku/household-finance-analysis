@@ -12,7 +12,8 @@
 - 💡 **統計にみる貯蓄の傾向** — 擬似個票4.6万世帯の機械学習分析（ランダムフォレスト ROC-AUC 0.774）と、黒字率・資産構成の集計分析
 - 📈 **データとトレンド** — 24年分の時系列、年代で絞った収入×貯蓄の関係
 
-分析の設計判断（何を・なぜ・どう判断したか）は [`kansei/DESIGN_DECISIONS.md`](kansei/DESIGN_DECISIONS.md) に記録しています。
+分析の設計判断（何を・なぜ・どう判断したか）は [`kansei/DESIGN_DECISIONS.md`](kansei/DESIGN_DECISIONS.md) に、
+統計用語・家計指標・分析手法・データファイルの意味は [`GLOSSARY.md`](GLOSSARY.md)（用語辞典）にまとめています。
 
 ## セットアップ
 

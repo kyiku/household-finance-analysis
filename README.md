@@ -1,10 +1,23 @@
 # 家計調査ダッシュボード — 家計の立ち位置診断と貯蓄余力の分析
 
+> 📦 **リポジトリ（アプリ本体・分析コード・テストの全ソース）**
+> **https://github.com/kyiku/household-finance-analysis**
+> このREADME内のリンクはすべてGitHub上の該当ファイルへ直接飛べます。
+
 総務省の公的統計（家計調査・全国家計構造調査・一般用ミクロデータ）を使って、
 「あなたの家計は世の中と比べてどうか」を診断する Streamlit アプリと、
 「貯蓄余力の高い世帯は何が違うか」の機械学習分析です。
 
 チーム開発課題（AIProgrammingⅣ）の成果物。
+
+### 提出資料の対応表
+
+| 必須項目 | 本READMEの該当箇所 | 補足資料 | 該当ソース |
+|---|---|---|---|
+| プロジェクトの背景・目的 | [1章](#1-背景と目的) | [設計判断の記録](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/DESIGN_DECISIONS.md) | — |
+| データセット（参照元・列の説明） | [4章](#4-使用データセット) | [用語辞典](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §1・§8・§9 | [`data_loader.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/src/data_loader.py) / [`microdata.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/src/microdata.py) |
+| 分析手法（モデル・アルゴリズム） | [5章](#5-分析手法) | [用語辞典](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §6・§7 | [`percentile.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/src/percentile.py) / [`clustering.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/src/clustering.py) / [`train_saver_model.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/scripts/train_saver_model.py) |
+| アプリ構成 | [6章](#6-アプリ構成) | — | [`app.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/app.py) / [`src/`](https://github.com/kyiku/household-finance-analysis/tree/main/kansei/src) / [`ui/`](https://github.com/kyiku/household-finance-analysis/tree/main/kansei/ui) |
 
 **目次**
 
@@ -18,8 +31,8 @@
 8. [データの再取得（任意）](#8-データの再取得任意)
 9. [出典・利用上の注意](#9-出典利用上の注意)
 
-関連ドキュメント: [`GLOSSARY.md`](GLOSSARY.md)（統計用語・家計指標・分析手法・データ列の辞書） /
-[`kansei/DESIGN_DECISIONS.md`](kansei/DESIGN_DECISIONS.md)（設計判断の記録 D1〜D11）
+関連ドキュメント: [`GLOSSARY.md`](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md)（統計用語・家計指標・分析手法・データ列の辞書） /
+[`kansei/DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/DESIGN_DECISIONS.md)（設計判断の記録 D1〜D11）
 
 ---
 
@@ -50,7 +63,7 @@
 (a) と (b) でデータを分けているのは意図的です。集計データからは「グループの傾向」しか言えず、
 「個々の世帯の特徴」を語るには個票が必要（**生態学的誤謬**を避ける）——この区別が
 本プロジェクトの分析設計を貫く原則です。詳細な経緯は
-[`DESIGN_DECISIONS.md`](kansei/DESIGN_DECISIONS.md) D4・D10・D11 を参照。
+[`DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/DESIGN_DECISIONS.md) D4・D10・D11 を参照。
 
 ### スコープ外
 
@@ -139,7 +152,7 @@ streamlit run app.py
 
 未使用列: `T_Age_5s`（世帯主年齢5歳階級。`T_Age_65` と情報が重複するため）。
 
-各列の完全な定義（変換条件つき）は [`GLOSSARY.md`](GLOSSARY.md) §9、
+各列の完全な定義（変換条件つき）は [`GLOSSARY.md`](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §9、
 統計用語は §1・§6・§7 にまとめています。
 
 ---
@@ -207,7 +220,7 @@ streamlit run app.py
 **学習設定**: 45,811世帯を学習70%（32,067）/ 検証30%（13,744）に層化分割。
 集計用乗率 `Weight` を学習・評価の `sample_weight` に使用。`random_state=42` で再現可能。
 
-**比較したモデル**（理論の詳細は [`GLOSSARY.md`](GLOSSARY.md) §7）:
+**比較したモデル**（理論の詳細は [`GLOSSARY.md`](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §7）:
 
 | モデル | 仕組み | 設定 | 精度 | ROC-AUC |
 |---|---|---|---|---|

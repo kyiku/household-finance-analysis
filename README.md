@@ -350,12 +350,27 @@ household-finance-analysis/
   tests/                 # pytest(93件) + AppTestスモーク
   data/                  # 取得済みCSV + モデル結果
   microdata/             # 一般用ミクロデータ(フルセットzip同梱)
-  notebooks/             # データ取得・探索ノートブック(Colab版含む)
+  notebooks/             # データ取得・探索ノートブック(下表)
+  conftest.py            # pytestのimportルート指定(空だが必須)
   requirements.txt
   README.md
   GLOSSARY.md            # 用語辞典
   DESIGN_DECISIONS.md    # 意思決定の記録(D1〜D12)
 ```
+
+### ノートブック（`notebooks/`）
+
+アプリ本体とは独立した、データ取得と探索の作業記録です。
+`_colab` 付きは Google Colab で動かすための版（Secrets / Drive マウント対応）で、
+中身の分析は対応するローカル版と同じです。
+
+| ファイル | 内容 |
+|---|---|
+| `kakei_data_fetch.ipynb` | e-Stat API から家計調査の基本5データセットを取得する手順（README 8章から参照） |
+| `kakei_data_fetch_colab.ipynb` | 同上のColab版（appIdはColab Secretsから読む） |
+| `kakei_data_overview.ipynb` | 取得データの概要把握と傾向分析。**グラフ出力を保存済みなのでGitHub上でそのまま閲覧できます** |
+| `kakei_data_overview_colab.ipynb` | 同上のColab版 |
+| `kakei_analysis_colab.ipynb` | 初期分析（収入階級別の貯蓄推移・年収五分位別の黒字率）。アプリ化前の検討段階の記録 |
 
 ---
 

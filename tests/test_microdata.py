@@ -14,6 +14,17 @@ from src.microdata import (
 MICRO_DIR = Path(__file__).resolve().parent.parent / "microdata" / "ippan_2009zensho"
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
+# ミクロデータは未加工のフルセットzip(microdata/ippan_2009zensho.zip)としてのみ
+# リポジトリに含めている(利用規約第3条。DESIGN_DECISIONS.md D12)。
+# 展開前は実ファイルを使うテストを skip する — cloneした直後でもテストが通るように。
+requires_microdata = pytest.mark.skipif(
+    not (MICRO_DIR / "ippan_2009zensho_z_dataset.csv").exists(),
+    reason=(
+        "実ミクロデータが未展開のため skip。"
+        "`unzip microdata/ippan_2009zensho.zip -d microdata/` で有効化されます。"
+    ),
+)
+
 
 @pytest.fixture
 def synthetic_raw():
@@ -44,6 +55,7 @@ def synthetic_raw():
 
 
 class TestLoadMicrodata:
+    @requires_microdata
     def test_loads_real_file(self):
         df = load_microdata(MICRO_DIR)
         assert len(df) > 40000

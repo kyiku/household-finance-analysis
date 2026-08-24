@@ -91,7 +91,7 @@
 |---|---|
 | Python | **3.12.14** と **3.14.7** の2バージョンでクリーンインストールから検証（macOS / Apple Silicon） |
 | 依存パッケージ | `requirements.txt` に**実測値でバージョン固定**（`pandas==3.0.3` など） |
-| 検証内容 | `pytest tests` 93件パス → `streamlit run app.py` が HTTP 200 で応答 |
+| 検証内容 | クリーンインストール → `pytest tests`（92 passed, 1 skipped）→ `streamlit run app.py` が HTTP 200 で応答 |
 
 Python 3.13 は未検証ですが、依存パッケージはいずれも3.12〜3.14をサポートしています。
 
@@ -140,8 +140,12 @@ streamlit run app.py --server.port 8501
 ### 動作確認
 
 ```bash
-pytest tests -q            # 93 passed と表示されれば環境構築は成功
+pytest tests -q            # 92 passed, 1 skipped と表示されれば環境構築は成功
 ```
+
+skipされる1件は、ミクロデータの実ファイルを読むテストです。学習データは未加工の
+zipとしてのみ同梱しているため（[4章](#4-使用データセット)）、展開前は自動でskipされます。
+[8章](#8-データの再取得任意)の `unzip` を実行すると **93 passed** になります。
 
 ### うまくいかないとき
 
@@ -439,6 +443,9 @@ pytest tests --cov=src             # カバレッジ
 `conftest.py`（リポジトリ直下・中身は空）は、pytest がリポジトリ直下を import ルートとして
 扱うためのマーカーです。**削除すると `tests/` から `from src...` が解決できなくなり、
 全テストモジュールがコレクションエラーになります。**
+
+テスト数は **全93件**ですが、clone直後は1件がskipされて **92 passed, 1 skipped** になります
+（ミクロデータの実ファイルを読むテスト。zipを展開すると 93 passed）。
 
 方針: 純粋ロジック（`src/`）は全関数をユニットテストし、UI層は Streamlit の `AppTest` による
 スモークテストのみとします（描画細部のテストは費用対効果が低いため）。

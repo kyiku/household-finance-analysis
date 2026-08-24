@@ -14,10 +14,10 @@
 
 | 必須項目 | 本READMEの該当箇所 | 補足資料 | 該当ソース |
 |---|---|---|---|
-| プロジェクトの背景・目的 | [1章](#1-背景と目的) | [設計判断の記録](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/DESIGN_DECISIONS.md) | — |
-| データセット（参照元・列の説明） | [4章](#4-使用データセット) | [用語辞典](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §1・§8・§9 | [`data_loader.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/src/data_loader.py) / [`microdata.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/src/microdata.py) |
-| 分析手法（モデル・アルゴリズム） | [5章](#5-分析手法) | [用語辞典](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §6・§7 | [`percentile.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/src/percentile.py) / [`clustering.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/src/clustering.py) / [`train_saver_model.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/scripts/train_saver_model.py) |
-| アプリ構成 | [6章](#6-アプリ構成) | — | [`app.py`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/app.py) / [`src/`](https://github.com/kyiku/household-finance-analysis/tree/main/kansei/src) / [`ui/`](https://github.com/kyiku/household-finance-analysis/tree/main/kansei/ui) |
+| プロジェクトの背景・目的 | [1章](#1-背景と目的) | [設計判断の記録](https://github.com/kyiku/household-finance-analysis/blob/main/DESIGN_DECISIONS.md) | — |
+| データセット（参照元・列の説明） | [4章](#4-使用データセット) | [用語辞典](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §1・§8・§9 | [`data_loader.py`](https://github.com/kyiku/household-finance-analysis/blob/main/src/data_loader.py) / [`microdata.py`](https://github.com/kyiku/household-finance-analysis/blob/main/src/microdata.py) |
+| 分析手法（モデル・アルゴリズム） | [5章](#5-分析手法) | [用語辞典](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §6・§7 | [`percentile.py`](https://github.com/kyiku/household-finance-analysis/blob/main/src/percentile.py) / [`clustering.py`](https://github.com/kyiku/household-finance-analysis/blob/main/src/clustering.py) / [`train_saver_model.py`](https://github.com/kyiku/household-finance-analysis/blob/main/scripts/train_saver_model.py) |
+| アプリ構成 | [6章](#6-アプリ構成) | — | [`app.py`](https://github.com/kyiku/household-finance-analysis/blob/main/app.py) / [`src/`](https://github.com/kyiku/household-finance-analysis/tree/main/src) / [`ui/`](https://github.com/kyiku/household-finance-analysis/tree/main/ui) |
 
 **目次**
 
@@ -32,7 +32,7 @@
 9. [出典・利用上の注意](#9-出典利用上の注意)
 
 関連ドキュメント: [`GLOSSARY.md`](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md)（統計用語・家計指標・分析手法・データ列の辞書） /
-[`kansei/DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/DESIGN_DECISIONS.md)（設計判断の記録 D1〜D11）
+[`DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/DESIGN_DECISIONS.md)（設計判断の記録 D1〜D12）
 
 ---
 
@@ -63,7 +63,7 @@
 (a) と (b) でデータを分けているのは意図的です。集計データからは「グループの傾向」しか言えず、
 「個々の世帯の特徴」を語るには個票が必要（**生態学的誤謬**を避ける）——この区別が
 本プロジェクトの分析設計を貫く原則です。詳細な経緯は
-[`DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/kansei/DESIGN_DECISIONS.md) D4・D10・D11 を参照。
+[`DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/DESIGN_DECISIONS.md) D4・D10・D11 を参照。
 
 ### スコープ外
 
@@ -93,13 +93,12 @@ cd household-finance-analysis
 
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -r kansei/requirements.txt
+pip install -r requirements.txt
 ```
 
-分析済みデータ（`kansei/data/*.csv`）は同梱しているので、**そのまま起動できます**:
+分析済みデータ（`data/*.csv`）は同梱しているので、**そのまま起動できます**:
 
 ```bash
-cd kansei
 streamlit run app.py
 ```
 
@@ -117,7 +116,7 @@ streamlit run app.py
 | **2019年全国家計構造調査** | 総務省統計局・5年ごと（約9万世帯） | 「年齢×収入」クロス比較（標本が大きく細かいクロス集計が可能） |
 | **一般用ミクロデータ**（平成21年全国消費実態調査・十大費目） | 統計センター提供の**擬似個票** 45,811世帯 | 機械学習の学習データ |
 
-### 集計データ（`kansei/data/`・リポジトリ同梱）
+### 集計データ（`data/`・リポジトリ同梱）
 
 | ファイル | 出典・粒度 | 期間 | 列 | 項目 |
 |---|---|---|---|---|
@@ -132,10 +131,35 @@ streamlit run app.py
 **時期コード**は e-Stat の期間識別子で `YYYY` + `00` + 開始月2桁 + 終了月2桁 の形式です
 （例: `2025001012` = 2025年10〜12月期、`2000000101` = 2000年1月）。`src/periods.py` でパースします。
 
-### 個票データ（`kansei/microdata/`・**リポジトリ非同梱**）
+### 個票データ（`microdata/ippan_2009zensho.zip`・**リポジトリ同梱**）
 
-利用規約により各自ダウンロードが必要です（手順は [8章](#8-データの再取得任意)）。
-`ippan_2009zensho_z_dataset.csv`（全世帯 45,811行、Shift_JIS、冒頭5行は注記）の使用列:
+学習データは統計センターからダウンロードした **未加工のフルセットzip のまま同梱**しています
+（4.9MB）。展開すると `ippan_2009zensho_z_dataset.csv`（全世帯 45,811行、Shift_JIS、
+冒頭5行は注記）が得られ、モデルの再学習まで完全に再現できます。
+
+<details>
+<summary><b>同梱に至った経緯（当初は非同梱だった）</b></summary>
+
+開発当初は「規約上、第三者への再配布は不可」と判断して非同梱とし、READMEに各自ダウンロードの
+手順だけを載せていました。その後 [一般用ミクロデータ利用規約](https://www.nstac.go.jp/use/archives/ippan-microdata/request/)
+を条文まで確認したところ、**再配布は禁止されておらず、条件付きで認められている**ことが分かりました。
+
+> **第3条 第三者への配布について**
+> 第三者に一般用ミクロデータを配布する場合には、編集・加工されたデータではなく、
+> 当サイトからダウンロードしたフルセットデータで配布してください。
+
+第4条の禁止事項は「営利活動（販売など）」「国家・国民の安全への脅威」「法令・公序良俗違反」
+「統計調査結果のデータから作成したかのような態様での公表」の4項目で、本プロジェクト
+（非営利の授業課題、出典表記あり、擬似データである旨を明記）はいずれにも該当しません。
+
+そこで方針を変更し、**ダウンロードしたzipをそのまま**同梱することにしました。zipのままなのは
+第3条の「編集・加工されたデータではなく、フルセットデータで」という条件を文字どおり満たすためで、
+`.gitignore` では展開後のディレクトリ（`microdata/ippan_2009zensho/`）を除外しています。
+判断の詳細は [`DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/DESIGN_DECISIONS.md) D12。
+
+</details>
+
+使用列は次のとおりです:
 
 | 列名 | 内容 | 本プロジェクトでの扱い |
 |---|---|---|
@@ -260,7 +284,7 @@ flowchart LR
     A1[e-Stat API]:::ext --> S1[fetch_benchmark_data.py]
     A2[一般用ミクロデータ<br/>45,811世帯]:::ext --> S2[train_saver_model.py]
   end
-  S1 --> D[(kansei/data/*.csv)]
+  S1 --> D[(data/*.csv)]
   S2 --> D
   D --> L[data_loader / cross_benchmark<br/>読み込み・整形]
   L --> C[src/ 純粋ロジック<br/>percentile・benchmark・analysis<br/>clustering・features・periods]
@@ -306,7 +330,7 @@ flowchart LR
 ### ディレクトリ
 
 ```
-kansei/
+household-finance-analysis/
   app.py                 # Streamlit エントリポイント(3タブ)
   src/                   # 純粋ロジック(すべてユニットテスト済み)
     periods.py           #   e-Stat時期コードのパース
@@ -319,13 +343,18 @@ kansei/
     features.py          #   比率計算・収入階級判定・入力検証
     microdata.py         #   擬似個票の特徴量構築・結果CSV読み込み
   ui/                    # Streamlit 画面(タブごと)
+    diagnosis.py         #   タブ1 あなたの家計診断
+    insights.py          #   タブ2 統計にみる貯蓄の傾向
+    trends.py            #   タブ3 データとトレンド
   scripts/               # データ取得・モデル学習(事前実行)
   tests/                 # pytest(93件) + AppTestスモーク
   data/                  # 取得済みCSV + モデル結果
-  microdata/             # 一般用ミクロデータ(非同梱・各自DL)
-  DESIGN_DECISIONS.md    # 意思決定の記録(D1〜D11)
-notebooks/               # データ取得・探索ノートブック(Colab版含む)
-GLOSSARY.md              # 用語辞典
+  microdata/             # 一般用ミクロデータ(フルセットzip同梱)
+  notebooks/             # データ取得・探索ノートブック(Colab版含む)
+  requirements.txt
+  README.md
+  GLOSSARY.md            # 用語辞典
+  DESIGN_DECISIONS.md    # 意思決定の記録(D1〜D12)
 ```
 
 ---
@@ -333,7 +362,6 @@ GLOSSARY.md              # 用語辞典
 ## 7. テスト
 
 ```bash
-cd kansei
 pytest tests -q                    # 93テスト
 pytest tests --cov=src             # カバレッジ
 ```
@@ -354,29 +382,28 @@ pytest tests --cov=src             # カバレッジ
 3. 取得スクリプトを実行:
 
 ```bash
-cd kansei
 python scripts/fetch_benchmark_data.py   # 貯蓄分布・年齢×収入クロス表 → data/
 ```
 
 家計調査の基本5データセット（収入階級別・年齢階級別など）の取得手順は
 `notebooks/kakei_data_fetch.ipynb` を参照してください。
 
-### 一般用ミクロデータ（機械学習の学習データ）
+### 一般用ミクロデータ（機械学習の再学習）
 
-利用規約に基づき **各自でダウンロード** してください（リポジトリには含めていません）:
-
-1. https://www.nstac.go.jp/use/archives/ippan-microdata/request/ で利用規約に同意し、利用者情報を登録
-2. 「平成21年全国消費実態調査（十大費目）」`ippan_2009zensho.zip` をダウンロード
-3. `kansei/microdata/` に展開（`kansei/microdata/ippan_2009zensho/ippan_2009zensho_z_dataset.csv` になる配置）
-4. モデルを学習:
+zipは同梱しているので、**展開して学習スクリプトを走らせるだけ**です:
 
 ```bash
-cd kansei
+unzip microdata/ippan_2009zensho.zip -d microdata/
 python scripts/train_saver_model.py      # 結果CSVを data/ に出力(アプリが表示)
 ```
 
-※ 学習済みの結果CSV（`kansei/data/microdata_*.csv`）は同梱しているため、
+`random_state=42` で固定しているため、同じ結果CSVが再現されます。
+
+※ 学習済みの結果CSV（`data/microdata_*.csv`）も同梱しているため、
 モデルを再学習しない限りこの手順は不要です。
+※ 元データを配布元から直接取得したい場合は
+https://www.nstac.go.jp/use/archives/ippan-microdata/request/ で利用規約に同意し、
+「平成21年全国消費実態調査（十大費目）」をダウンロードしてください。
 
 ---
 
@@ -387,3 +414,13 @@ python scripts/train_saver_model.py      # 結果CSVを data/ に出力(アプ�
 - 一般用ミクロデータは擬似データであり、**分析結果は実証研究の結果とみなせません**（教育・演習用）
 - 「二人以上世帯」と「勤労者世帯」など対象の異なる統計が混在するため、タブ間で水準を直接比較しないでください
 - 2019年全国家計構造調査（単年）と家計調査（直近1年）は調査・時点が異なるため、水準の直接比較は避けてください
+
+### 一般用ミクロデータの同梱について
+
+[利用規約](https://www.nstac.go.jp/use/archives/ippan-microdata/request/)第3条に従い、
+**配布元からダウンロードしたフルセットzipを未加工のまま**同梱しています
+（編集・加工したデータの配布は同条で認められていません）。
+第2条の出典表記義務は本節およびアプリのUI上で満たしています。
+第4条の禁止事項（営利利用・安全への脅威・法令違反・統計調査結果のような態様での公表）には
+いずれも該当しません。同梱に至った判断の経緯は [4章](#4-使用データセット)の折りたたみと
+`DESIGN_DECISIONS.md` D12 に記録しています。

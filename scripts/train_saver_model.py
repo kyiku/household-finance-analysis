@@ -1,7 +1,7 @@
 """一般用ミクロデータで「貯蓄余力の高い世帯」分類モデルを学習し、結果を data/ に保存する。
 
 学習はこのスクリプトで事前に行い、アプリは結果CSVを読むだけにする(起動を軽く保つため)。
-実行: `python scripts/train_saver_model.py` (kansei/ から)
+実行: `python scripts/train_saver_model.py` (リポジトリ直下から)
 
 出力:
 - data/microdata_model_metrics.csv   … モデル別の精度・ROC-AUC

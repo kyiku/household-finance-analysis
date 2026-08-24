@@ -19,6 +19,19 @@
 | 分析手法（モデル・アルゴリズム） | [5章](#5-分析手法) | [用語辞典](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md) §6・§7 | [`percentile.py`](https://github.com/kyiku/household-finance-analysis/blob/main/src/percentile.py) / [`clustering.py`](https://github.com/kyiku/household-finance-analysis/blob/main/src/clustering.py) / [`train_saver_model.py`](https://github.com/kyiku/household-finance-analysis/blob/main/scripts/train_saver_model.py) |
 | アプリ構成 | [6章](#6-アプリ構成) | — | [`app.py`](https://github.com/kyiku/household-finance-analysis/blob/main/app.py) / [`src/`](https://github.com/kyiku/household-finance-analysis/tree/main/src) / [`ui/`](https://github.com/kyiku/household-finance-analysis/tree/main/ui) |
 
+### メンバーと担当
+
+課題テーマに使う公的統計の調査・選定は、メンバー4名でそれぞれ候補を探して持ち寄る形で進めました。
+選定後のデータ取得から分析設計・アプリ実装・テスト・ドキュメントまでは比嘉が担当しています。
+
+| メンバー | 担当 |
+|---|---|
+| 宮崎 | データセットの調査・選定 |
+| 石田 | データセットの調査・選定 |
+| 田中 | データセットの調査・選定 |
+| 比嘉 | データセットの調査・選定／データ取得（e-Stat API・一般用ミクロデータ）／分析設計（[5章](#5-分析手法)）／アプリ実装（[6章](#6-アプリ構成)）／テスト（[7章](#7-テスト)）／ドキュメント（本README・用語辞典・設計判断の記録） |
+
+
 **目次**
 
 1. [背景と目的](#1-背景と目的)

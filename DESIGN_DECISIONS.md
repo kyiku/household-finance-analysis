@@ -246,6 +246,51 @@ READMEに各自ダウンロードの手順を書いていた。**この判断は
 **D8 との関係**: D8 の「git リポジトリ化・コミット（このディレクトリは git 管理外）」は
 本決定で解消済み。D8 のその項目は当時の記録として残す。
 
+### D13. 再現性のための依存バージョン固定と多環境検証（2026-08-24）
+
+**背景**: READMEのセットアップ手順が「誰のPCでも再現できるか」を点検したところ、
+複数の問題が見つかった。
+
+- `python -m venv .venv` と書いていたが、**macOS/Linux には `python` が存在しない環境が多い**
+  （開発機でも `python: command not found`）。`python3` でなければ動かない。
+- `requirements.txt` がバージョン無指定だったため、`pip install` の実行時期によって
+  入るバージョンが変わる。特に pandas は 3.0 系というメジャー更新直後で、
+  将来 4.x が出れば無言で壊れる。
+- 「ブラウザで http://localhost:8501 が開きます」と断定していたが、8501が使用中なら
+  Streamlit は自動で別ポートを選ぶため、URLは環境によって変わる。
+- Python の対応範囲を「3.12+（開発は3.14）」と書いていたが、3.12は**未検証の推測**だった。
+
+**決定**:
+
+1. 依存を実測値で固定し、用途別に3ファイルへ分割する。
+   - `requirements.txt` — アプリ実行＋テスト（`pandas==3.0.3` `matplotlib==3.11.0`
+     `japanize-matplotlib==1.1.3` `scikit-learn==1.9.0` `streamlit==1.61.1`
+     `pytest==9.1.1` `pytest-cov==7.1.0`、および `setuptools<81`）
+   - `requirements-notebooks.txt` — Jupyter一式（`jupyter` `ipykernel` `nbconvert`）。
+     アプリ起動には不要なので分離した。Colab版ノートブックを使う場合は不要。
+   - `requirements-lock.txt` — `pip freeze` の全136パッケージ。依存解決が食い違ったときの
+     完全再現用。
+2. `setuptools<81` は japanize-matplotlib が `distutils.version.LooseVersion` を使うことへの
+   対策である旨をコメントで明記（意図不明のバージョン上限を残さない）。
+3. READMEのセットアップ手順を、macOS/Linux（`python3 -m venv`）と
+   Windows/PowerShell（`py -3 -m venv`、ExecutionPolicy の注記つき）に分けて書き直す。
+   起動については「ターミナルに表示されたURLを開く」に改め、ポート固定したい場合の
+   `--server.port` を併記。実行はリポジトリ直下からである旨も明記（`app.py` が
+   `data/` を相対パスで読むため）。
+4. よくある失敗7件（`python: command not found` / `ModuleNotFoundError: src` /
+   `FileNotFoundError: data/...` / ポート未開放 / 日本語の豆腐化 / 依存の食い違い /
+   Jupyter未導入）を症状・原因・対処の表にする。
+
+**検証**: 主張を推測で書かないため、開発環境（Python 3.14.7）とは別に
+**Python 3.12.14 で空の仮想環境を作り、`requirements.txt` からクリーンインストール**して確認した。
+
+- インストールされたバージョンは開発環境と完全一致
+- `pytest tests` 93件パス
+- `streamlit run app.py` が HTTP 200 で応答
+
+これによりREADMEの「3.12と3.14で検証済み」は実測に基づく記述になった。3.13は未検証であり、
+その旨もREADMEに明記している（推測を検証済みと書かない）。
+
 ## 検証
 
 - `pytest` によるユニットテスト（純粋ロジック全関数、56件）+ `AppTest` スモークテスト

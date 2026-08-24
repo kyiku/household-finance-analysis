@@ -32,7 +32,7 @@
 9. [出典・利用上の注意](#9-出典利用上の注意)
 
 関連ドキュメント: [`GLOSSARY.md`](https://github.com/kyiku/household-finance-analysis/blob/main/GLOSSARY.md)（統計用語・家計指標・分析手法・データ列の辞書） /
-[`DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/DESIGN_DECISIONS.md)（設計判断の記録 D1〜D12）
+[`DESIGN_DECISIONS.md`](https://github.com/kyiku/household-finance-analysis/blob/main/DESIGN_DECISIONS.md)（設計判断の記録 D1〜D13）
 
 ---
 
@@ -85,24 +85,75 @@
 
 ## 3. セットアップと起動
 
-必要なもの: Python 3.12+（開発は3.14で実施）
+### 動作確認済みの環境
+
+| 項目 | 検証した値 |
+|---|---|
+| Python | **3.12.14** と **3.14.7** の2バージョンでクリーンインストールから検証（macOS / Apple Silicon） |
+| 依存パッケージ | `requirements.txt` に**実測値でバージョン固定**（`pandas==3.0.3` など） |
+| 検証内容 | `pytest tests` 93件パス → `streamlit run app.py` が HTTP 200 で応答 |
+
+Python 3.13 は未検証ですが、依存パッケージはいずれも3.12〜3.14をサポートしています。
+
+### 手順（macOS / Linux）
 
 ```bash
 git clone https://github.com/kyiku/household-finance-analysis.git
 cd household-finance-analysis
 
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+python3 -m venv .venv              # macOS/Linux には python が無い環境が多いので python3
+source .venv/bin/activate
+python -m pip install -U pip       # 有効化後は python / pip が仮想環境のものになる
 pip install -r requirements.txt
 ```
 
-分析済みデータ（`data/*.csv`）は同梱しているので、**そのまま起動できます**:
+### 手順（Windows / PowerShell）
+
+```powershell
+git clone https://github.com/kyiku/household-finance-analysis.git
+cd household-finance-analysis
+
+py -3 -m venv .venv
+.venv\Scripts\Activate.ps1        # 実行が拒否される場合: Set-ExecutionPolicy -Scope Process RemoteSigned
+python -m pip install -U pip
+pip install -r requirements.txt
+```
+
+### 起動
+
+分析済みデータ（`data/*.csv`）と学習済みモデル結果は同梱しているので、そのまま起動できます。
+**リポジトリ直下で実行してください**（`app.py` が `data/` を相対パスで読むため）。
 
 ```bash
 streamlit run app.py
 ```
 
-ブラウザで http://localhost:8501 が開きます。
+起動すると**ターミナルにURLが表示されるので、それを開いてください**。
+既定は http://localhost:8501 ですが、8501が他のプロセスに使われている場合
+Streamlit は自動で別のポート（8502…）を選ぶため、URLは環境によって変わります。
+固定したい場合はポートを明示します。
+
+```bash
+streamlit run app.py --server.port 8501
+```
+
+### 動作確認
+
+```bash
+pytest tests -q            # 93 passed と表示されれば環境構築は成功
+```
+
+### うまくいかないとき
+
+| 症状 | 原因 | 対処 |
+|---|---|---|
+| `python: command not found` | macOS/Linux には `python` が無く `python3` のみ | 仮想環境を作るまでは `python3` を使う（有効化後は `python` で可） |
+| `ModuleNotFoundError: No module named 'src'` | リポジトリ直下以外で実行した／`conftest.py` を削除した | 直下で実行する。`conftest.py` は空でも**削除しない**（[7章](#7-テスト)） |
+| `FileNotFoundError: data/....csv` | カレントディレクトリが違う | `cd household-finance-analysis` してから `streamlit run app.py` |
+| ブラウザで 8501 が開かない | ポートが使用中で別ポートに割り当てられた | ターミナルに表示されたURLを開く／`--server.port` で指定 |
+| グラフの日本語が □ になる | japanize-matplotlib が入っていない | `pip install -r requirements.txt` をやり直す |
+| 依存の解決に失敗する／別バージョンが入る | ローカルに既存パッケージが混在している | 完全再現用のロックファイルを使う: `pip install -r requirements-lock.txt`（開発環境の全136パッケージを固定） |
+| ノートブックを開けない | Jupyter は `requirements.txt` に含めていない | `pip install -r requirements-notebooks.txt`（Colab版を使う場合は不要） |
 
 ---
 
@@ -352,10 +403,12 @@ household-finance-analysis/
   microdata/             # 一般用ミクロデータ(フルセットzip同梱)
   notebooks/             # データ取得・探索ノートブック(下表)
   conftest.py            # pytestのimportルート指定(空だが必須)
-  requirements.txt
+  requirements.txt              # アプリ実行+テスト(バージョン固定)
+  requirements-notebooks.txt    # ノートブック実行時のみ追加
+  requirements-lock.txt         # 完全再現用(全依存をpip freezeで固定)
   README.md
-  GLOSSARY.md            # 用語辞典
-  DESIGN_DECISIONS.md    # 意思決定の記録(D1〜D12)
+  GLOSSARY.md                   # 用語辞典
+  DESIGN_DECISIONS.md           # 意思決定の記録(D1〜D13)
 ```
 
 ### ノートブック（`notebooks/`）
@@ -376,10 +429,16 @@ household-finance-analysis/
 
 ## 7. テスト
 
+**リポジトリ直下で実行してください。**
+
 ```bash
 pytest tests -q                    # 93テスト
 pytest tests --cov=src             # カバレッジ
 ```
+
+`conftest.py`（リポジトリ直下・中身は空）は、pytest がリポジトリ直下を import ルートとして
+扱うためのマーカーです。**削除すると `tests/` から `from src...` が解決できなくなり、
+全テストモジュールがコレクションエラーになります。**
 
 方針: 純粋ロジック（`src/`）は全関数をユニットテストし、UI層は Streamlit の `AppTest` による
 スモークテストのみとします（描画細部のテストは費用対効果が低いため）。

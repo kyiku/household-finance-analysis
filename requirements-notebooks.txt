@@ -1,0 +1,6 @@
+# notebooks/ の .ipynb をローカルで実行する場合のみ必要。
+# アプリの起動・テストには不要(requirements.txt だけで足りる)。
+# Google Colab 版(*_colab.ipynb)を使う場合はインストール不要。
+jupyter==1.1.1
+ipykernel==7.3.0
+nbconvert==7.17.1
